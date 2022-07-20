@@ -83,7 +83,7 @@ if __name__ == "__main__":
     
     import multiprocessing
     m = multiprocessing.Manager()
-    q = m.Queue(1024)
+    q = m.Queue(2048)
     p1 = multiprocessing.Process(target=data_fetcher, args=('train', q,))
     p1.start()
     p2 = multiprocessing.Process(target=data_fetcher, args=('train', q,))

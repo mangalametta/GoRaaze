@@ -38,13 +38,18 @@ def resnet_block(input_channels, num_channels, num_residuals,first_block=False):
 class Network(nn.Module):
     def __init__(self):
         super(Network, self).__init__()
-        b1 = nn.Sequential(nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=3),nn.BatchNorm2d(64), nn.ReLU())
-        b2 = nn.Sequential(*resnet_block(64, 64, 2, first_block=True))
-        b3 = nn.Sequential(*resnet_block(64, 128, 2))
-        b4 = nn.Sequential(*resnet_block(128, 256, 2))
-        b5 = nn.Sequential(*resnet_block(256, 512, 2))
-        self.net = nn.Sequential(b1, b2, b3, b4, b5,nn.Flatten())
-        self.fc1 = nn.Linear(4609, 1000)
+        b1 = nn.Sequential(nn.Conv2d(1, 256, kernel_size=3, stride=1, padding=0),nn.BatchNorm2d(256), nn.ReLU())
+        b2 = nn.Sequential(*resnet_block(256, 256, 2, first_block=True))
+        b3 = nn.Sequential(*resnet_block(256, 256, 2))
+        b4 = nn.Sequential(*resnet_block(256, 256, 2))
+        b5 = nn.Sequential(*resnet_block(256, 256, 2))
+        b6 = nn.Sequential(*resnet_block(256, 256, 2))
+        b7 = nn.Sequential(*resnet_block(256, 256, 2))
+        b8 = nn.Sequential(*resnet_block(256, 256, 2))
+        b9 = nn.Sequential(*resnet_block(256, 256, 2))
+        b10 = nn.Sequential(*resnet_block(256, 256, 2))
+        self.net = nn.Sequential(b1, b2, b3, b4, b5, b6, b7, b8, b9 ,b10,nn.Flatten())
+        self.fc1 = nn.Linear(257, 1000)
         self.fc2 = nn.Linear(1000, 362)
 
     def forward(self, x):

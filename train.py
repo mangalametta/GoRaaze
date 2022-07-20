@@ -13,8 +13,8 @@ if __name__=="__main__":
     model  = Network().to(device)
 
     # dataloader
-    train_loader = DataLoader(dataset=GoData('train'), batch_size=4)
-    val_loader = DataLoader(dataset=GoData('val'), batch_size=4)
+    train_loader = DataLoader(dataset=GoData('train'), batch_size=64)
+    val_loader = DataLoader(dataset=GoData('val'), batch_size=64)
 
 
 
