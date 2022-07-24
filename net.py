@@ -51,7 +51,7 @@ class Network(nn.Module):
         self.final = nn.Sequential(nn.Conv2d(256, 256, kernel_size=1, stride=1),nn.BatchNorm2d(256), nn.ReLU(),nn.Conv2d(256, 1, kernel_size=1, stride=1))
         self.flatting = nn.Sequential( nn.Conv2d(256, 4, kernel_size=1, stride=1),nn.BatchNorm2d(4), nn.ReLU(), nn.Flatten())
         self.net = nn.Sequential(b1, b2, b3, b4, b5, b6, b7, b8, b9 ,b10)
-        self.fc1 = nn.Linear(1445,1000)
+        self.fc1 = nn.Linear(677,1000)
         self.fc2 = nn.Linear(1000,1)
 
     def forward(self, x, c):
@@ -59,16 +59,18 @@ class Network(nn.Module):
         
         x = self.net(x)
         y = self.final(x)
+        y = torch.reshape(y[...,:],y.shape[:-3]+(169,))
+
         # fully connected layers
         w = self.flatting(F.relu(x))
         w = torch.cat((w,c),dim=1)
         w = F.relu(self.fc1(w))
-        w = nn.functional.sigmoid(self.fc2(w))
+        w = torch.sigmoid(self.fc2(w))
         return y, w
 
 
 if __name__ == "__main__":
-    X = torch.rand(size=(1, 4, 19,19))
+    X = torch.rand(size=(1, 4, 13,13))
     C = torch.rand(size=(1, 1))
     net = Network()
     o = net.forward(X,C)

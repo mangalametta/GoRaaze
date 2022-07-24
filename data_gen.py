@@ -4,7 +4,7 @@ import torch
 import random
 
 def valid(x,y):
-    return 0 <= x < 19 and 0<= y < 19
+    return 0 <= x < 13 and 0<= y < 13
 
 def getConnectedComponet(board,location,visited):
     r, c = location
@@ -17,7 +17,7 @@ def getConnectedComponet(board,location,visited):
     return connected
 
 def markKi(board,ki,connected):
-    visited = torch.zeros((19,19), dtype=torch.int32)
+    visited = torch.zeros((13,13), dtype=torch.int32)
     kiCount = 0
     for r,c in connected:
         for x,y in [(r+1,c),(r-1,c),(r,c+1),(r,c-1)]:
@@ -29,24 +29,24 @@ def markKi(board,ki,connected):
 
 
 def getKi(board):
-    ki = torch.zeros((19,19), dtype=torch.float32)
-    visited = torch.zeros((19,19), dtype=torch.int32)
-    for r in range(19):
-        for c in range(19):
+    ki = torch.zeros((13,13), dtype=torch.float32)
+    visited = torch.zeros((13,13), dtype=torch.int32)
+    for r in range(13):
+        for c in range(13):
             if board[r][c] is None or visited[r][c]:
                 continue
             connected = getConnectedComponet(board,(r,c),visited)
             markKi(board, ki, connected)
-    ki = torch.reshape(ki,(1,19,19))
+    ki = torch.reshape(ki,(1,13,13))
     return ki
     
     
 
 def board2Data(board, colour):
     # we do three channel? or 4( include handcraft feature?
-    tensor = torch.zeros((3,19,19), dtype=torch.float32)
-    for i in range(19):
-        for j in range(19):
+    tensor = torch.zeros((3,13,13), dtype=torch.float32)
+    for i in range(13):
+        for j in range(13):
             if not board[i][j] is None:
                 if board[i][j] == 'b':
                     tensor[0][i][j] = 1.0
@@ -64,9 +64,9 @@ def board2Data(board, colour):
     return (tensor, color)
 
 def move2Target(move,result):
-    tensor = torch.zeros((1,19,19), dtype=torch.float32)
+    tensor = torch.zeros((169), dtype=torch.float32)
     win = torch.zeros((1), dtype=torch.float32)
-    tensor[0][move[0]][move[1]] = 1 #
+    tensor[move[0]*13 + move[1]] = 1 #
     win[0] = 1 if result == 'b' else 0
     return (tensor,win)
 

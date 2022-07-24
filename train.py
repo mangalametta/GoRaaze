@@ -54,9 +54,10 @@ if __name__=="__main__":
 
             optimizer.step()
 
-            if (i + 1) % 50 == 0:
+            if (i + 1) % 10 == 0:
                 print(f'epoch {epoch+1}/{10}, step {i+1}/{n_total_steps}, loss = {loss.item():.10f}')
-            if (i + 1) % 250 == 0:
-                torch.save(model.state_dict(), 'model.weight')
+            if (i + 1) % 500 == 0:
+                print(outputs)
+                torch.save(model.state_dict(), '/gdrive/MyDrive/ForHonk/model.weight')
 
     print('Finished Training')
