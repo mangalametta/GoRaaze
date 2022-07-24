@@ -7,8 +7,8 @@ class GoData(Dataset):
     def __init__(self,set_name='train'):
         self.size = getSetSize(set_name)
         m = multiprocessing.Manager()
-        self.q = m.Queue(2048)
-        self.process_count = 2
+        self.q = m.Queue(5120)
+        self.process_count = 1
         self.processes = []
         for i in range(self.process_count):
             self.processes.append(multiprocessing.Process(target=data_fetcher, args=(set_name, self.q,)))

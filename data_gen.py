@@ -1,4 +1,3 @@
-from signal import valid_signals
 from sgfmill import sgf
 from sgfmill import sgf_moves
 import torch
@@ -88,7 +87,8 @@ def data_fetcher(set_name, sharedQueue):
             board, plays = sgf_moves.get_setup_and_moves(sgf_game)
             
         except Exception as e:
-            print(e)
+            #print(e)
+            break
         # skip bad games
         # the last 5 is under consideration of passing move
         if len(plays) <= moves + 5:
