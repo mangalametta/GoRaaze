@@ -48,7 +48,7 @@ class Network(nn.Module):
         b8 = nn.Sequential(*resnet_block(256, 256, 2))
         b9 = nn.Sequential(*resnet_block(256, 256, 2))
         b10 = nn.Sequential(*resnet_block(256, 256, 2))
-        self.final = nn.Sequential(nn.Conv2d(256, 256, kernel_size=1, stride=1),nn.BatchNorm2d(128), nn.ReLU(),nn.Conv2d(256, 1, kernel_size=1, stride=1))
+        self.final = nn.Sequential(nn.Conv2d(256, 256, kernel_size=1, stride=1),nn.BatchNorm2d(256), nn.ReLU(),nn.Conv2d(256, 1, kernel_size=1, stride=1))
         self.flatting = nn.Sequential( nn.Conv2d(256, 4, kernel_size=1, stride=1),nn.BatchNorm2d(4), nn.ReLU(), nn.Flatten())
         self.net = nn.Sequential(b1, b2, b3, b4, b5, b6, b7, b8, b9 ,b10)
         self.fc1 = nn.Linear(1445,1000)

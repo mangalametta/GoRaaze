@@ -88,7 +88,7 @@ def data_fetcher(set_name, sharedQueue):
             
         except Exception as e:
             #print(e)
-            break
+            continue
         # skip bad games
         # the last 5 is under consideration of passing move
         if len(plays) <= moves + 5:
@@ -100,6 +100,8 @@ def data_fetcher(set_name, sharedQueue):
         # extract board and next move
         moveCount = 0
         for colour, move in plays:
+            if move is None:
+                break
             if moveCount > moveSample[-1]+1:
                 break
             if moveCount+1 in moveSample:
@@ -110,8 +112,6 @@ def data_fetcher(set_name, sharedQueue):
                 
             
             moveCount += 1
-            if move is None:
-                continue
             row, col = move
             try:
                 board.play(row, col, colour)

@@ -25,8 +25,8 @@ if __name__=="__main__":
     model  = Network().to(device)
 
     # dataloader
-    train_loader = DataLoader(dataset=GoData('train'), batch_size=8)
-    val_loader = DataLoader(dataset=GoData('val'), batch_size=8)
+    train_loader = DataLoader(dataset=GoData('train'), batch_size=32)
+    val_loader = DataLoader(dataset=GoData('val'), batch_size=32)
 
 
 
@@ -54,8 +54,9 @@ if __name__=="__main__":
 
             optimizer.step()
 
-            if (i + 1) % 250 == 0:
+            if (i + 1) % 50 == 0:
                 print(f'epoch {epoch+1}/{10}, step {i+1}/{n_total_steps}, loss = {loss.item():.10f}')
+            if (i + 1) % 250 == 0:
                 torch.save(model.state_dict(), 'model.weight')
 
     print('Finished Training')
