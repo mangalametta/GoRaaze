@@ -30,7 +30,7 @@ def resnet_block(input_channels, num_channels, num_residuals,first_block=False):
     blk = []
     for i in range(num_residuals):
         if i == 0 and not first_block:
-            blk.append(Residual(input_channels, num_channels,use_1x1conv=True, strides=2))
+            blk.append(Residual(input_channels, num_channels,use_1x1conv=True, strides=1))
     else:
         blk.append(Residual(num_channels, num_channels))
     return blk
@@ -38,7 +38,7 @@ def resnet_block(input_channels, num_channels, num_residuals,first_block=False):
 class Network(nn.Module):
     def __init__(self):
         super(Network, self).__init__()
-        b1 = nn.Sequential(nn.Conv2d(1, 256, kernel_size=3, stride=1, padding=0),nn.BatchNorm2d(256), nn.ReLU())
+        b1 = nn.Sequential(nn.Conv2d(4, 256, kernel_size=3, stride=1, padding=1),nn.BatchNorm2d(256), nn.ReLU())
         b2 = nn.Sequential(*resnet_block(256, 256, 2, first_block=True))
         b3 = nn.Sequential(*resnet_block(256, 256, 2))
         b4 = nn.Sequential(*resnet_block(256, 256, 2))
@@ -48,24 +48,28 @@ class Network(nn.Module):
         b8 = nn.Sequential(*resnet_block(256, 256, 2))
         b9 = nn.Sequential(*resnet_block(256, 256, 2))
         b10 = nn.Sequential(*resnet_block(256, 256, 2))
-        self.net = nn.Sequential(b1, b2, b3, b4, b5, b6, b7, b8, b9 ,b10,nn.Flatten())
-        self.fc1 = nn.Linear(257, 1000)
-        self.fc2 = nn.Linear(1000, 362)
+        self.final = nn.Sequential(nn.Conv2d(256, 1, kernel_size=1, stride=1),nn.BatchNorm2d(1), nn.ReLU())
+        self.flatting = nn.Sequential(nn.Conv2d(256, 4, kernel_size=1, stride=1),nn.BatchNorm2d(4), nn.ReLU(), nn.Flatten())
+        self.net = nn.Sequential(b1, b2, b3, b4, b5, b6, b7, b8, b9 ,b10)
+        self.fc1 = nn.Linear(1445,1000)
+        self.fc2 = nn.Linear(1000,1)
 
-    def forward(self, x):
-        # only the input needs to be reshape here
-        c = x[...,-1]
-        x = torch.reshape(x[...,:-1],x.shape[:-1]+(19,19))
+    def forward(self, x, c):
         # first conv
+        
         x = self.net(x)
+        y = self.final(x)
         # fully connected layers
-        x = torch.cat((x, c), dim=1)
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
+        w = self.flatting(x)
+        w = torch.cat((w,c),dim=1)
+        w = F.relu(self.fc1(w))
+        w = self.fc2(w)
+        return y, w
 
 
 if __name__ == "__main__":
-    X = torch.rand(size=(512, 1, 362))
+    X = torch.rand(size=(1, 4, 19,19))
+    C = torch.rand(size=(1, 1))
     net = Network()
-    print(net.forward(X).shape)
+    o = net.forward(X,C)
+    print(o[1].shape)

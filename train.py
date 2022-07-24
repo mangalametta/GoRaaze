@@ -1,9 +1,21 @@
 from multiprocessing import freeze_support
-from net import Network
+from net import  Network
 from dataset import GoData
 from torch.utils.data import DataLoader
 import torch
 from torch import nn
+
+class CustomLoss(nn.Module):
+    def __init__(self):
+        super(CustomLoss, self).__init__()
+        self.loss1 = nn.CrossEntropyLoss()
+        self.loss2 = nn.CrossEntropyLoss()
+
+ 
+    def forward(self, x, y):
+        b, w = x
+        bt, wt = y
+        return self.loss1(b,bt) + self.loss2(w,wt)
 
 
 if __name__=="__main__":
@@ -13,26 +25,26 @@ if __name__=="__main__":
     model  = Network().to(device)
 
     # dataloader
-    train_loader = DataLoader(dataset=GoData('train'), batch_size=64)
-    val_loader = DataLoader(dataset=GoData('val'), batch_size=64)
+    train_loader = DataLoader(dataset=GoData('train'), batch_size=32)
+    val_loader = DataLoader(dataset=GoData('val'), batch_size=32)
 
 
 
     # metric
-    criterion = nn.MSELoss()
+    criterion = CustomLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     # train
     n_total_steps = len(train_loader)
     for epoch in range(10):
         for i, (images, labels) in enumerate(train_loader):
-            images = images.to(device)
-            labels = labels.to(device)
+            x, c = images.to(device)
+            labels = labels#.to(device)
             # init optimizer
             optimizer.zero_grad()
             
             # forward -> backward -> update
-            outputs = model(images)
+            outputs = model(x,c)
             loss = criterion(outputs, labels)
             loss.backward()
 
